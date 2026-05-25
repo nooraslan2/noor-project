@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+     <meta charset="htf-8">
+     <meta name="viewpoart"content="width=device-width">
+     <title>Rocket Mission</title>
+    </head>
+
+    <body>
+
+        <center>
+          <h1>Welcome to My Rocket Mission!</h1>
+          
+          <p>Today, our rocket is getting ready to travel across space.</p>
+
+          <h2>Step 1: Met thr Rocket</h2>
+          <img src="rockrt.png"alt="A rocket ready to launch" width="350"
+
+          <p>This rocket will take us to a new planet.</p>
+
+          <h2>Step 2:Our Space Destiation</h2>
+          <img src="planent.png"alt="A colourful planent in space" width="350"
+          height="350"
+          
+          <p>We found a beautiful planent far away from Earth</p>
+
+          <h2>Step 3: The Space Explorer</h2>
+          <img src="astronaut.png" alt="An astronaut exploring space" width="350"
+          height="350">
+
+          <p>The astronaut is ready to explore the planent.</p>
+
+          <h2>Mission Complete!</h2>
+          <p>We used the image tag to add picture and tell a space story on our
+      webpage.</p>
+         </center>
+
+         </body>
+
+         </html>
+
+         </html>
+
+
+
+
+c:\Users\pc\Desktop\solar-system-illustration-16x9-1.jpg
