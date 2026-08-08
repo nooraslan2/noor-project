@@ -1,0 +1,16 @@
+{
+  "name": "Dry Cake Game",
+  "short_name": "Dry Cake",
+  "description": "A fun cake baking game",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/512",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
