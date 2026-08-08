@@ -1,0 +1,650 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>DIY Custom Cake Studio</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: repeating-linear-gradient(
+        90deg,
+        #fff0f5,
+        #fff0f5 40px,
+        #ffdae9 40px,
+        #ffdae9 80px
+      );
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      overflow-x: hidden;
+    }
+
+    .screen {
+      display: none;
+      width: 95%;
+      max-width: 750px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 4px solid #ffb6c1;
+      border-radius: 25px;
+      padding: 15px;
+      box-shadow: 0 10px 30px rgba(219, 112, 147, 0.25);
+      text-align: center;
+      position: relative;
+    }
+
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .loader-bar-bg {
+      width: 80%;
+      height: 25px;
+      background: #fff;
+      border-radius: 15px;
+      margin: 20px 0;
+      overflow: hidden;
+      border: 2px solid #ffb6c1;
+    }
+
+    .loader-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #ff758c, #ff7eb3);
+      transition: width 0.1s linear;
+    }
+
+    .cake-grid {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-height: 250px;
+      overflow-y: auto;
+      padding: 5px;
+    }
+
+    .cake-card {
+      background: #fff5f7;
+      border: 2px solid #ffb6c1;
+      border-radius: 15px;
+      padding: 10px;
+      cursor: pointer;
+      width: 110px;
+      transition: transform 0.2s;
+    }
+
+    .cake-card:hover {
+      transform: scale(1.05);
+    }
+
+    .cake-card span {
+      font-size: 32px;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .cake-card h3 {
+      font-size: 12px;
+    }
+
+    .bowl-container {
+      width: 180px;
+      height: 95px;
+      background: #ff85a2;
+      border-radius: 0 0 100px 100px;
+      position: relative;
+      margin: 15px 0;
+      border: 4px solid #f76c8e;
+      overflow: hidden;
+    }
+
+    .ingredient-layer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      transition: height 0.4s ease, background-color 0.4s ease;
+    }
+
+    .ingredient-btn {
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      color: white;
+      font-size: 12px;
+    }
+
+    .oven {
+      width: 180px;
+      height: 130px;
+      background: #ffb3c6;
+      border-radius: 15px;
+      border: 5px solid #ff85a2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 15px 0;
+    }
+
+    .oven-window {
+      width: 130px;
+      height: 80px;
+      background: rgba(255, 165, 0, 0.3);
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .raw-cake {
+      width: 110px;
+      height: 55px;
+      background: #fff3cd;
+      border-radius: 12px 12px 0 0;
+      transition: background-color 3s ease;
+    }
+
+    .baked {
+      background: #8b5a2b !important;
+    }
+
+    .cake-display {
+      width: 220px;
+      height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      position: relative;
+      margin: 10px 0;
+      user-select: none;
+    }
+
+    .plate {
+      width: 190px;
+      height: 10px;
+      background: #e0e0e0;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .cake-body {
+      width: 140px;
+      height: 80px;
+      background: #8b5a2b;
+      border-radius: 12px 12px 0 0;
+      position: relative;
+      overflow: visible;
+      transition: background 0.3s ease;
+    }
+
+    .frosting {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      border-radius: 12px 12px 0 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: background 0.3s ease;
+    }
+
+    .rainbow-cream {
+      background: linear-gradient(135deg, #ff7675, #ffeaa7, #55efc4, #74b9ff, #a29bfe) !important;
+    }
+
+    .topping-item {
+      position: absolute;
+      font-size: 26px;
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      z-index: 20;
+    }
+
+    .packing-area {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+
+    .big-box {
+      width: 180px;
+      height: 130px;
+      background: #ffd1dc;
+      border: 4px dashed #ff69b4;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .box-lid {
+      position: absolute;
+      top: -12px;
+      width: 190px;
+      height: 20px;
+      background: #ffb6c1;
+      border-radius: 10px;
+      border: 2px solid #ff69b4;
+    }
+
+    .customer-girl {
+      font-size: 70px;
+      position: absolute;
+      right: -100px;
+      bottom: 10px;
+      transition: right 1.5s ease-in-out;
+    }
+
+    .customer-girl.walk-in {
+      right: 30px;
+    }
+
+    .speech-bubble {
+      display: none;
+      position: absolute;
+      top: 5px;
+      right: 20px;
+      background: #fff;
+      border: 2px solid #ff69b4;
+      border-radius: 15px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: bold;
+      color: #d63384;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+
+    .action-btn {
+      padding: 10px 20px;
+      background: #ff4757;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    .status-msg {
+      font-size: 13px;
+      font-weight: bold;
+      color: #d63384;
+      margin-top: 5px;
+      min-height: 18px;
+    }
+
+    .music-player {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 2px solid #ffb6c1;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="music-player">
+    🎵 <span>Bakery Music</span>
+    <button onclick="toggleMusic()" id="musicBtn" style="border:none; background:none; cursor:pointer;">⏸️ Pause</button>
+  </div>
+  <audio id="bgMusic" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"></audio>
+
+  <!-- SCREEN 1: LOADING -->
+  <div id="screenLoading" class="screen active">
+    <h1 style="color:#d63384; font-size: 22px;">🍰 Sweet Pink Bakery 👩‍🍳</h1>
+    <p style="margin-top:5px; color:#666; font-size: 13px;">Opening kitchen studio...</p>
+    <div class="loader-bar-bg">
+      <div id="loaderFill" class="loader-bar-fill"></div>
+    </div>
+    <p id="loaderPercent" style="font-weight:bold; color:#ff4757; font-size: 14px;">0%</p>
+  </div>
+
+  <!-- SCREEN 2: SELECT CAKE -->
+  <div id="screenSelect" class="screen">
+    <h2 style="font-size: 18px;">Choose Cake Design 🎂</h2>
+    <div class="cake-grid">
+      <div class="cake-card" onclick="selectCake('Doll Cake 🪆')">
+        <span>🪆</span>
+        <h3>Doll Cake</h3>
+      </div>
+      <div class="cake-card" onclick="selectCake('Car Cake 🏎️')">
+        <span>🏎️</span>
+        <h3>Car Cake</h3>
+      </div>
+      <div class="cake-card" onclick="selectCake('Rainbow Cake 🌈')">
+        <span>🌈</span>
+        <h3>Rainbow Cake</h3>
+      </div>
+      <div class="cake-card" onclick="selectCake('Chocolate Cake 🍫')">
+        <span>🍫</span>
+        <h3>Chocolate</h3>
+      </div>
+      <div class="cake-card" onclick="selectCake('Butterfly Cake 🦋')">
+        <span>🦋</span>
+        <h3>Butterfly Cake</h3>
+      </div>
+      <div class="cake-card" onclick="selectCake('Princess Castle 🏰')">
+        <span>🏰</span>
+        <h3>Princess Castle</h3>
+      </div>
+      <div class="cake-card" onclick="selectCake('Superhero Cake 🦸‍♂️')">
+        <span>🦸‍♂️</span>
+        <h3>Superhero Cake</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: MIXING -->
+  <div id="screenMixing" class="screen">
+    <h2 id="selectedCakeTitle" style="font-size: 18px;">Mixing Ingredients</h2>
+    <p style="font-size: 12px;">Add ingredients into the kitchen bowl!</p>
+
+    <div class="bowl-container">
+      <div id="flourLayer" class="ingredient-layer" style="background:#ffffff;"></div>
+      <div id="eggLayer" class="ingredient-layer" style="background:#ffda79;"></div>
+      <div id="oilLayer" class="ingredient-layer" style="background:#ffb142;"></div>
+    </div>
+
+    <div class="btn-group">
+      <button class="ingredient-btn" style="background:#a4b0be;" onclick="addIng('flour')">⚪ White Flour</button>
+      <button class="ingredient-btn" style="background:#fbc531;" onclick="addIng('egg')">🟡 Yellow Egg</button>
+      <button class="ingredient-btn" style="background:#e1b12c;" onclick="addIng('oil')">🛢️ Golden Oil</button>
+    </div>
+
+    <p id="mixStatusMsg" class="status-msg"></p>
+    <button class="action-btn" onclick="mixIngredients()">🥣 Mix Batter</button>
+  </div>
+
+  <!-- SCREEN 4: OVEN -->
+  <div id="screenOven" class="screen">
+    <h2 style="font-size: 18px;">Bake in Kitchen Oven 🔥</h2>
+    <p style="font-size: 12px;">Baking batter into cake...</p>
+    <div class="oven">
+      <div class="oven-window">
+        <div id="rawCake" class="raw-cake"></div>
+      </div>
+    </div>
+    <p id="bakeStatusMsg" class="status-msg"></p>
+    <button id="bakeBtn" class="action-btn" onclick="bakeCake()">🔥 Start Baking</button>
+  </div>
+
+  <!-- SCREEN 5: DECORATION -->
+  <div id="screenDecorate" class="screen">
+    <h2 style="font-size: 18px;">Decorate Cake 🎨</h2>
+    <div class="cake-display" id="cakeDisplay">
+      <div class="cake-body" id="cakeBody">
+        <div id="frosting" class="frosting"></div>
+      </div>
+      <div class="plate"></div>
+    </div>
+
+    <div class="btn-group">
+      <button class="ingredient-btn" style="background:#ffb6c1;" onclick="setCream('#ffb6c1')">Pink</button>
+      <button class="ingredient-btn" style="background:#ffffff; color:#333; border:1px solid #ccc;" onclick="setCream('#ffffff')">White</button>
+      <button class="ingredient-btn" style="background:#70a1ff;" onclick="setCream('#70a1ff')">Blue</button>
+      <button class="ingredient-btn" style="background:#5c3d2e;" onclick="setCream('#5c3d2e')">Chocolate</button>
+      <button class="ingredient-btn" style="background:#ffc048; color:#333;" onclick="setCream('#ffc048')">Mango</button>
+      <button class="ingredient-btn" style="background:#be2edd;" onclick="setCream('#be2edd')">Purple</button>
+      <button class="ingredient-btn" style="background:linear-gradient(90deg, red, yellow, green, blue); color:white;" onclick="setCream('rainbow')">🌈 Rainbow</button>
+    </div>
+
+    <div class="btn-group">
+      <button class="ingredient-btn" style="background:#ff6b81;" onclick="addTopping('🍓')">🍓 Strawberry</button>
+      <button class="ingredient-btn" style="background:#e84118;" onclick="addTopping('🍒')">🍒 Cherries</button>
+      <button class="ingredient-btn" style="background:#ffa502;" onclick="addTopping('👑')">👑 Crown</button>
+      <button class="ingredient-btn" style="background:#ff78ae;" onclick="addTopping('🕯️')">🕯️ Candle</button>
+      <button class="ingredient-btn" style="background:#ff4757;" onclick="addTopping('🪆')">🪆 Doll</button>
+      <button class="ingredient-btn" style="background:#2ed573;" onclick="addTopping('🏎️')">🏎️ Car</button>
+      <button class="ingredient-btn" style="background:#1e90ff;" onclick="addTopping('🌈')">🌈 Rainbow</button>
+      <button class="ingredient-btn" style="background:#333;" onclick="addTopping('🍫')">🍫 Chocolate</button>
+      <button class="ingredient-btn" style="background:#a55eea;" onclick="addTopping('🦋')">🦋 Butterfly</button>
+      <button class="ingredient-btn" style="background:#ffbe76; color:#333;" onclick="addTopping('🏰')">🏰 Castle</button>
+      <button class="ingredient-btn" style="background:#eb4d4b;" onclick="addTopping('🦸‍♂️')">🦸‍♂️ Superhero</button>
+    </div>
+
+    <button class="ingredient-btn" style="background:#718093;" onclick="clearToppings()">🧹 Clear</button>
+    <button class="action-btn" onclick="finishCakeAndPack()">✨ Pack & Deliver</button>
+  </div>
+
+  <!-- SCREEN 6: AUTOMATIC PACKING & CUSTOMER GIRL -->
+  <div id="screenPack" class="screen">
+    <h2 id="packHeader" style="font-size: 18px;">Cake Ready & Auto-Packed! 🎁</h2>
+
+    <div class="packing-area">
+      <div class="big-box" id="bigBox">
+        <div class="box-lid"></div>
+        <p style="color:#d63384; font-size:13px; font-weight:bold; margin-top:15px;">📦 Cake Packed!</p>
+      </div>
+
+      <div id="customerGirl" class="customer-girl">👧</div>
+      <div id="speechBubble" class="speech-bubble">Thank you! So pretty! 💖</div>
+    </div>
+
+    <button id="restartBtn" class="action-btn" style="display:none;" onclick="restartGame()">🔄 Bake Another Cake</button>
+  </div>
+
+  <script>
+    let ingredientsAdded = { flour: false, egg: false, oil: false };
+    let music = document.getElementById('bgMusic');
+
+    window.addEventListener('DOMContentLoaded', () => {
+      startAutoMusic();
+    });
+
+    function startAutoMusic() {
+      music.play().then(() => {
+        document.getElementById('musicBtn').innerText = '⏸️ Pause';
+      }).catch(() => {
+        document.body.addEventListener('click', () => {
+          music.play();
+          document.getElementById('musicBtn').innerText = '⏸️ Pause';
+        }, { once: true });
+      });
+    }
+
+    function toggleMusic() {
+      let btn = document.getElementById('musicBtn');
+      if (music.paused) {
+        music.play();
+        btn.innerText = '⏸️ Pause';
+      } else {
+        music.pause();
+        btn.innerText = '▶️ Play';
+      }
+    }
+
+    // Loading
+    let progress = 0;
+    let loadingInterval = setInterval(() => {
+      progress += 2;
+      document.getElementById('loaderFill').style.width = progress + '%';
+      document.getElementById('loaderPercent').innerText = progress + '%';
+      if (progress >= 100) {
+        clearInterval(loadingInterval);
+        goToScreen('screenSelect');
+      }
+    }, 40);
+
+    function goToScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+    }
+
+    // Selection
+    function selectCake(type) {
+      document.getElementById('selectedCakeTitle').innerText = 'Making ' + type;
+      goToScreen('screenMixing');
+    }
+
+    // Mixing
+    function addIng(item) {
+      ingredientsAdded[item] = true;
+      if (item === 'flour') document.getElementById('flourLayer').style.height = '30%';
+      if (item === 'egg') document.getElementById('eggLayer').style.height = '60%';
+      if (item === 'oil') document.getElementById('oilLayer').style.height = '90%';
+      document.getElementById('mixStatusMsg').innerText = "";
+    }
+
+    function mixIngredients() {
+      if (ingredientsAdded.flour && ingredientsAdded.egg && ingredientsAdded.oil) {
+        document.getElementById('mixStatusMsg').innerText = "Batter mixed completely! Moving to oven...";
+        setTimeout(() => {
+          goToScreen('screenOven');
+        }, 1000);
+      } else {
+        document.getElementById('mixStatusMsg').innerText = "Please add White Flour, Yellow Egg & Golden Oil first!";
+      }
+    }
+
+    // Baking
+    function bakeCake() {
+      document.getElementById('bakeBtn').style.display = 'none';
+      document.getElementById('bakeStatusMsg').innerText = "Baking cake... Please wait 3 seconds 🔥";
+      document.getElementById('rawCake').classList.add('baked');
+      
+      setTimeout(() => {
+        document.getElementById('bakeStatusMsg').innerText = "Cake baked perfectly!";
+        setTimeout(() => {
+          goToScreen('screenDecorate');
+        }, 1000);
+      }, 3000);
+    }
+
+    // Decoration
+    function setCream(color) {
+      let frosting = document.getElementById('frosting');
+      frosting.classList.remove('rainbow-cream');
+      if (color === 'rainbow') {
+        frosting.classList.add('rainbow-cream');
+      } else {
+        frosting.style.background = color;
+      }
+    }
+
+    function addTopping(emoji) {
+      let cakeDisplay = document.getElementById('cakeDisplay');
+      let item = document.createElement('div');
+      item.className = 'topping-item';
+      item.innerText = emoji;
+      item.style.left = '95px';
+      item.style.top = '30px';
+      cakeDisplay.appendChild(item);
+      makeDraggable(item);
+    }
+
+    function makeDraggable(element) {
+      let posX = 0, posY = 0, mouseX = 0, mouseY = 0;
+      element.onmousedown = dragMouseDown;
+      element.ontouchstart = dragTouchStart;
+
+      function dragMouseDown(e) {
+        e.preventDefault();
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+      }
+
+      function elementDrag(e) {
+        e.preventDefault();
+        posX = mouseX - e.clientX;
+        posY = mouseY - e.clientY;
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        element.style.top = (element.offsetTop - posY) + "px";
+        element.style.left = (element.offsetLeft - posX) + "px";
+      }
+
+      function dragTouchStart(e) {
+        let touch = e.touches[0];
+        mouseX = touch.clientX;
+        mouseY = touch.clientY;
+        document.ontouchend = closeDragElement;
+        document.ontouchmove = elementTouchMove;
+      }
+
+      function elementTouchMove(e) {
+        let touch = e.touches[0];
+        posX = mouseX - touch.clientX;
+        posY = mouseY - touch.clientY;
+        mouseX = touch.clientX;
+        mouseY = touch.clientY;
+        element.style.top = (element.offsetTop - posY) + "px";
+        element.style.left = (element.offsetLeft - posX) + "px";
+      }
+
+      function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+        document.ontouchend = null;
+        document.ontouchmove = null;
+      }
+    }
+
+    function clearToppings() {
+      let items = document.querySelectorAll('.topping-item');
+      items.forEach(item => item.remove());
+    }
+
+    // Auto Packing & Customer Delivery
+    function finishCakeAndPack() {
+      goToScreen('screenPack');
+      
+      setTimeout(() => {
+        let girl = document.getElementById('customerGirl');
+        girl.classList.add('walk-in');
+
+        setTimeout(() => {
+          document.getElementById('speechBubble').style.display = 'block';
+          document.getElementById('restartBtn').style.display = 'inline-block';
+        }, 1500);
+      }, 500);
+    }
+
+    function restartGame() {
+      location.reload();
+    }
+  </script>
+
+</body>
+</html>
