@@ -1,32 +1,43 @@
 /* style.css */
-body{
-  background:#2b2b2b;
-  font-family:"Barlow TT", sans-serif;
+
+/* Section background like the image */
+#social-media{
+  background: #2f3550;          /* dark bluish */
 }
 
-#projects h1{
-  font-weight:900;
+/* Heading style */
+.m-heading{
+  font-weight: 700;
+  margin-top: 6px;
 }
 
-.card{
-  border:0;
-  border-radius:3px;
-  box-shadow:0 6px 18px rgba(0,0,0,.35);
+/* Button cards */
+.media_link{
+  border: 2px solid #f2a900;    /* yellow border */
+  border-radius: 4px;
+  padding: 14px 18px;
+  margin-right: 18px;
+  background: transparent;
+  text-align: left;
 }
 
-.card-img-top{
-  padding:18px;
-  height:13rem;
-  object-fit:contain;
+/* Keep spacing like the screenshot */
+.row.pt-5{
+  gap: 18px;
 }
 
-.card-text{
-  color:#6f7780;
-  font-size:.85rem;
+/* Text inside the buttons */
+.media_link h3{
+  font-size: 16px;
+  font-weight: 600;
 }
 
-.btn-warning{
-  font-weight:700;
-  font-size:.8rem;
-  border-radius:3px;
+/* Icons */
+.media_link i{
+  font-size: 22px;
+}
+
+/* Email button filled (already has bg-warning in HTML) */
+.media_link.bg-warning{
+  border: 2px solid #f2a900;
 }
