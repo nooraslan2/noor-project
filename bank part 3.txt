@@ -1,0 +1,49 @@
+/*
+1) Create helper functions to read and update the calculator display:
+   a) `getHistory()` → return the text inside `#history-value`.
+   b) `printHistory(num)` → set `#history-value` to `num`.
+   c) `getOutput()` → return the text inside `#output-value`.
+   d) `printOutput(num)` → show `num` in `#output-value`
+      - if `num` is empty, show blank
+      - else show it using formatted number (commas)
+
+2) Format and unformat numbers:
+   a) `getFormattedNumber(num)`:
+      - If num is "-" return empty (avoid showing just "-")
+      - Convert to Number and use `toLocaleString("en")` to add commas.
+   b) `reverseNumberFormat(num)`:
+      - Remove commas using `replace(/,/g,'')`
+      - Convert back to Number.
+
+3) Add click events for operator buttons (class="operator"):
+   a) Get all operator buttons using `getElementsByClassName("operator")`.
+   b) Loop through each button and add a `click` event listener.
+
+4) Handle operator button actions:
+   a) If button id is `"clear"`:
+      - Clear history and output.
+   b) Else if button id is `"backspace"`:
+      - Remove the last digit from output and re-print it.
+   c) Else (for +, -, *, /, %, =):
+      - Read current output and history.
+      - If output is empty but history ends with an operator, remove the last operator.
+      - If output or history has value:
+        - Convert output to number (remove commas)
+        - Add output to history
+
+      - If button id is `"="`:
+        - Evaluate full history using `eval(history)`
+        - Print result in output and clear history
+      - Else:
+        - Add the operator to history
+        - Print history and clear output for next number input.
+
+5) Add click events for number buttons (class="number"):
+   a) Get all number buttons using `getElementsByClassName("number")`.
+   b) Loop through each button and add a `click` event listener.
+
+6) Handle number button clicks:
+   a) Get current output (remove commas).
+   b) Append the clicked digit (`this.id`) to the output.
+   c) Print the updated output (formatted with commas).
+*/
